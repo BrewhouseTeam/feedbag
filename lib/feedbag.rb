@@ -43,7 +43,7 @@ class Feedbag
   end
 
   def self.find(url, args = {})
-    new.find(url, args = {})
+    new.find(url, args)
   end
 
   def initialize
@@ -96,7 +96,12 @@ class Feedbag
     end
 
     begin
-      html = open(url, :allow_redirections => :all) do |f|
+      open_uri_options = {
+        :allow_redirections => :all
+      }
+      open_uri_options["User-Agent"] = args[:user_agent] if args[:user_agent]
+
+      html = open(url, open_uri_options) do |f|
         content_type = f.content_type.downcase
         if content_type == "application/octet-stream" # open failed
           content_type = f.meta["content-type"].gsub(/;.*$/, '')
